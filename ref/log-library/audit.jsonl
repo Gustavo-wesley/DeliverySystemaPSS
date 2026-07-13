@@ -1,0 +1,4 @@
+{"usuario":"Fulano de tal","data":"02/06/2026","hora":"23:07:18","codigoPedido":"PED001","operacao":"Calculo do valor total","cliente":"Maria","mensagem":"Operacao realizada com sucesso"}
+{"usuario":"Balcão PDV 1","data":"02/06/2026","hora":"23:18:07","codigoPedido":"PED001","operacao":"Calculo do valor total do pedido","cliente":"Maria","mensagem":"Operacao realizada com sucesso"}
+{"usuario":"Gerente","data":"02/06/2026","hora":"23:18:07","codigoPedido":"PED002","operacao":"Aplicacao de cupom","cliente":"Joao","mensagem":"Cupom aplicado com sucesso"}
+{"usuario":"Fulano de tal","data":"02/06/2026","hora":"23:18:07","codigoPedido":"PED003","operacao":"Aplicacao de cupom","cliente":"Carlos","mensagem":"Erro de teste"}

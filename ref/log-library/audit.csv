@@ -1,0 +1,2 @@
+usuario,data,hora,codigoPedido,operacao,cliente,mensagem
+Fulano de tal,02/06/2026,23:10:10,PED001,Calculo do valor total,Maria,Operacao realizada com sucesso
