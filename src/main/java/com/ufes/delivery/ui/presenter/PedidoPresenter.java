@@ -6,6 +6,7 @@ import com.ufes.delivery.excecao.ValidacaoException;
 import com.ufes.delivery.model.Cliente;
 import com.ufes.delivery.model.CupomDescontoPedido;
 import com.ufes.delivery.model.Endereco;
+import com.ufes.delivery.model.EstadoPedido;
 import com.ufes.delivery.model.Item;
 import com.ufes.delivery.model.Pagamento;
 import com.ufes.delivery.model.Pedido;
@@ -44,12 +45,29 @@ public class PedidoPresenter {
 
     private Cliente clienteSelecionado;
     private Pedido pedidoAtual;
+    private final Pedido pedidoInicial; // null quando e pedido novo
 
     public PedidoPresenter(IPedidoView view, IClienteRepository clienteRepository,
             IPedidoRepository pedidoRepository, ProdutoService produtoService,
             AplicadorCupomPedidoService aplicadorCupom,
             CalculadoraTaxaDescontoPedidoService calculadoraTaxa,
             ProcessarPagamentoService processarPagamentoService, INavegador navegador) {
+        this(view, clienteRepository, pedidoRepository, produtoService, aplicadorCupom,
+                calculadoraTaxa, processarPagamentoService, navegador, null);
+    }
+
+    /**
+     * Abre um pedido existente (acao Visualizar do painel, US04).
+     * Pedido em estado Novo permanece editavel; os demais abrem
+     * somente para consulta.
+     */
+    public PedidoPresenter(IPedidoView view, IClienteRepository clienteRepository,
+            IPedidoRepository pedidoRepository, ProdutoService produtoService,
+            AplicadorCupomPedidoService aplicadorCupom,
+            CalculadoraTaxaDescontoPedidoService calculadoraTaxa,
+            ProcessarPagamentoService processarPagamentoService, INavegador navegador,
+            Pedido pedidoExistente) {
+        this.pedidoInicial = pedidoExistente;
         this.view = Objects.requireNonNull(view, "View deve ser informada");
         this.clienteRepository = Objects.requireNonNull(clienteRepository,
                 "Repositório de clientes deve ser informado");
@@ -78,8 +96,29 @@ public class PedidoPresenter {
 
     public void iniciar() {
         carregarClientes();
+        if (pedidoInicial != null) {
+            carregarPedidoExistente();
+        }
         recalcular();
         view.abrir();
+    }
+
+    private void carregarPedidoExistente() {
+        pedidoAtual = pedidoInicial;
+        clienteSelecionado = pedidoAtual.getCliente();
+        view.setIdClienteSelecionado(clienteSelecionado.getId());
+
+        List<Endereco> enderecos = clienteSelecionado.getEnderecos();
+        view.setEnderecosDisponiveis(enderecos.stream()
+                .map(Endereco::descricaoCompleta)
+                .toList());
+        int indice = enderecos.indexOf(pedidoAtual.getEnderecoEntrega());
+        if (indice >= 0) {
+            view.setIndiceEnderecoSelecionado(indice);
+        }
+
+        // fora da elaboracao o pedido abre somente para consulta
+        view.setSomenteLeitura(pedidoAtual.getEstado() != EstadoPedido.NOVO);
     }
 
     private void carregarClientes() {
@@ -105,6 +144,9 @@ public class PedidoPresenter {
         Pedido anterior = pedidoAtual;
         pedidoAtual = new Pedido(LocalDateTime.now(), clienteSelecionado);
         if (anterior != null) {
+            // pedido ja persistido continua sendo o mesmo registro
+            pedidoAtual.setId(anterior.getId());
+            pedidoAtual.setCodigo(anterior.getCodigo());
             for (Item item : anterior.getItens()) {
                 pedidoAtual.adicionarItem(item);
             }

@@ -9,6 +9,7 @@ import com.ufes.delivery.desconto.taxa.entrega.CalculadoraTaxaDescontoPedidoServ
 import com.ufes.delivery.model.Cliente;
 import com.ufes.delivery.model.CupomDescontoPedido;
 import com.ufes.delivery.model.Pagamento;
+import com.ufes.delivery.model.Pedido;
 import com.ufes.delivery.model.Produto;
 import com.ufes.delivery.repository.IClienteRepository;
 import com.ufes.delivery.repository.IPedidoRepository;
@@ -61,6 +62,7 @@ import com.ufes.delivery.ui.swing.ProdutosFrame;
 import com.ufes.delivery.ui.swing.UsuariosFrame;
 import com.ufes.logger.ILogger;
 import java.time.LocalDateTime;
+import javax.swing.JOptionPane;
 
 /**
  * Composicao da aplicacao: injecao de dependencia manual por
@@ -188,6 +190,20 @@ public class AplicacaoDelivery implements INavegador {
         new PedidoPresenter(new PedidoFrame(), clienteRepository, pedidoRepository,
                 produtoService, aplicadorCupomService, calculadoraTaxaService,
                 processarPagamentoService, this).iniciar();
+    }
+
+    @Override
+    public void abrirPedido(String codigoPedido) {
+        Pedido pedido = pedidoRepository.buscarPorCodigo(codigoPedido).orElse(null);
+        if (pedido == null) {
+            JOptionPane.showMessageDialog(null,
+                    "Pedido não encontrado: " + codigoPedido,
+                    "Pedido", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        new PedidoPresenter(new PedidoFrame(), clienteRepository, pedidoRepository,
+                produtoService, aplicadorCupomService, calculadoraTaxaService,
+                processarPagamentoService, this, pedido).iniciar();
     }
 
     @Override

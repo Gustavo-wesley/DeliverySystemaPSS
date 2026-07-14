@@ -47,8 +47,7 @@ public class InicioPresenter {
         view.setAoBuscarProdutos(navegador::abrirBuscaProdutos);
         view.setAoNovoProduto(() -> navegador.abrirCadastroProduto(null));
         view.setAoMovimentacaoEstoque(navegador::abrirMovimentacaoEstoque);
-        view.setAoVisualizarPedido(codigo ->
-                emConstrucao("Visualização do pedido " + codigo));
+        view.setAoVisualizarPedido(navegador::abrirPedido);
         view.setAoAtualizar(this::atualizarPainel);
     }
 
@@ -94,8 +93,4 @@ public class InicioPresenter {
         view.mostrarPedidos(linhas);
     }
 
-    private void emConstrucao(String funcionalidade) {
-        // TODO: telas das proximas US serao plugadas aqui
-        view.mostrarInformacao(funcionalidade + ": tela em construção");
-    }
 }

@@ -33,6 +33,12 @@ public interface INavegador {
     void abrirNovoPedido();
 
     /**
+     * Abre a tela de pedido com os dados do pedido informado
+     * (acao Visualizar do painel, US04).
+     */
+    void abrirPedido(String codigoPedido);
+
+    /**
      * Exibe a tela somente leitura do resultado da tentativa (US11).
      */
     void mostrarResultadoPagamento(Pagamento pagamento);

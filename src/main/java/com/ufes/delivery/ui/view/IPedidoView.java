@@ -26,6 +26,17 @@ public interface IPedidoView {
 
     Long getIdClienteSelecionado();
 
+    /**
+     * Seleciona o cliente programaticamente, sem disparar o evento
+     * de selecao (usado ao abrir um pedido existente).
+     */
+    void setIdClienteSelecionado(Long id);
+
+    /**
+     * Pedido que ja saiu da elaboracao abre somente para consulta.
+     */
+    void setSomenteLeitura(boolean somenteLeitura);
+
     void setEnderecosDisponiveis(List<String> enderecos);
 
     int getIndiceEnderecoSelecionado();

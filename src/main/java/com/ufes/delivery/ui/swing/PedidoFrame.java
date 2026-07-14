@@ -65,6 +65,7 @@ public class PedidoFrame extends JFrame implements IPedidoView {
     private BiConsumer<Integer, String> aoAlterarQuantidade;
     // evita disparar eventos enquanto o Presenter recarrega os dados
     private boolean carregando = false;
+    private boolean somenteLeitura = false;
 
     public PedidoFrame() {
         super("Pedido");
@@ -74,7 +75,7 @@ public class PedidoFrame extends JFrame implements IPedidoView {
             @Override
             public boolean isCellEditable(int linha, int coluna) {
                 // so a quantidade pode ser editada; valores sao calculados
-                return coluna == COLUNA_QUANTIDADE;
+                return !somenteLeitura && coluna == COLUNA_QUANTIDADE;
             }
         };
         tabela = new JTable(modelo);
@@ -230,7 +231,7 @@ public class PedidoFrame extends JFrame implements IPedidoView {
             }
 
             private void exibirMenu(MouseEvent e) {
-                if (!e.isPopupTrigger()) {
+                if (!e.isPopupTrigger() || somenteLeitura) {
                     return;
                 }
                 int linha = tabela.rowAtPoint(e.getPoint());
@@ -282,6 +283,35 @@ public class PedidoFrame extends JFrame implements IPedidoView {
     public Long getIdClienteSelecionado() {
         int indice = comboCliente.getSelectedIndex();
         return indice < 0 ? null : idsClientes.get(indice);
+    }
+
+    @Override
+    public void setIdClienteSelecionado(Long id) {
+        carregando = true;
+        try {
+            int indice = idsClientes.indexOf(id);
+            comboCliente.setSelectedIndex(indice);
+        } finally {
+            carregando = false;
+        }
+    }
+
+    @Override
+    public void setSomenteLeitura(boolean somenteLeitura) {
+        this.somenteLeitura = somenteLeitura;
+        boolean editavel = !somenteLeitura;
+        comboCliente.setEnabled(editavel);
+        botaoNovoCliente.setEnabled(editavel);
+        comboEndereco.setEnabled(editavel);
+        campoProduto.setEnabled(editavel);
+        campoQuantidadeItem.setEnabled(editavel);
+        botaoAdicionarItem.setEnabled(editavel);
+        campoCupom.setEnabled(editavel);
+        botaoAplicarCupom.setEnabled(editavel);
+        botaoPagar.setEnabled(editavel);
+        if (somenteLeitura) {
+            botaoCancelar.setText("Fechar");
+        }
     }
 
     @Override
