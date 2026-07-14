@@ -1,0 +1,15 @@
+# build
+target/
+
+# bancos locais da execucao
+*.db
+
+# saidas de auditoria em arquivo
+auditoria.csv
+auditoria.xml
+auditoria.jsonl
+
+# IDE
+.idea/
+*.iml
+nbproject/
